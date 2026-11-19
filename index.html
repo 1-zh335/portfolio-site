@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>陈默 — 前端工程师 / 交互设计</title>
+<meta name="description" content="陈默，前端工程师与交互设计。八年时间在浏览器里打磨细节：设计系统、动效、性能，以及那些用户不会注意到但会感觉到的地方。" />
+<meta name="theme-color" content="#F2EEE6" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Archivo:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%2317130F'/%3E%3Ctext x='50' y='72' font-family='Georgia,serif' font-size='62' fill='%23F2EEE6' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<style>
+  :root{
+    --paper:#F2EEE6;
+    --paper-2:#E8E2D7;
+    --ink:#17130F;
+    --ink-soft:#4B433A;
+    --muted:#8C8377;
+    --rule:rgba(23,19,15,.15);
+    --accent:#C9401D;
+    --accent-soft:rgba(201,64,29,.10);
+    --serif:"Instrument Serif",Georgia,"Songti SC","Noto Serif SC",serif;
+    --sans:"Archivo","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+    --pad:clamp(20px,5vw,68px);
+    --max:1400px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-weight:400;
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    pointer-events:none;
+    opacity:.05;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--accent);color:var(--paper);}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:4px;}
+
+  .wrap{max-width:var(--max);margin:0 auto;padding-inline:var(--pad);}
+  .mono{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ---------- progress ---------- */
+  .progress{
+    position:fixed;top:0;left:0;height:2px;width:0%;
+    background:var(--accent);z-index:200;
+    transition:width .1s linear;
+  }
+
+  /* ---------- top bar ---------- */
+  header.top{
+    position:fixed;top:0;left:0;right:0;z-index:150;
+    backdrop-filter:blur(10px) saturate(1.1);
+    -webkit-backdrop-filter:blur(10px) saturate(1.1);
+    background:color-mix(in srgb,var(--paper) 78%,transparent);
+    border-bottom:1px solid transparent;
+    transition:border-color .4s ease,background .4s ease;
+  }
+  header.top.stuck{border-bottom-color:var(--rule);}
+  .top-inner{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    height:64px;
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;}
+  .brand b{
+    font-family:var(--serif);font-weight:400;font-size:23px;letter-spacing:.01em;
+  }
+  .brand span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);}
+  nav.links{display:flex;align-items:center;gap:28px;}
+  nav.links a{
+    font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono);
+    color:var(--ink-soft);position:relative;padding-block:4px;
+  }
+  nav.links a::after{
+    content:"";position:absolute;left:0;bottom:0;height:1px;width:0;
+    background:var(--accent);transition:width .35s cubic-bezier(.2,.8,.2,1);
+  }
+  nav.links a:hover::after{width:100%;}
+  .status{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 0 rgba(201,64,29,.55);
+    animation:pulse 2.4s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(201,64,29,.5);}
+    70%{box-shadow:0 0 0 9px rgba(201,64,29,0);}
+    100%{box-shadow:0 0 0 0 rgba(201,64,29,0);}
+  }
+
+  /* ---------- vertical rail ---------- */
+  .rail{
+    position:fixed;left:14px;top:50%;transform:translateY(-50%) rotate(180deg);
+    writing-mode:vertical-rl;z-index:120;
+    font-family:var(--mono);font-size:10px;letter-spacing:.4em;text-transform:uppercase;
+    color:var(--muted);pointer-events:none;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{padding-top:132px;padding-bottom:34px;position:relative;}
+  .hero-grid{
+    display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:clamp(24px,5vw,72px);
+    align-items:end;
+  }
+  .eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:26px;}
+  .eyebrow .line{height:1px;width:56px;background:var(--ink);opacity:.4;}
+  .hero h1{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:clamp(3.4rem,10.6vw,9.2rem);
+    line-height:.88;
+    letter-spacing:-.025em;
+    margin:0 0 8px;
+  }
+  .hero h1 .it{font-style:italic;color:var(--accent);}
+  .hero h1 .dotend{color:var(--accent);}
+  .hero .lede{
+    max-width:34ch;margin:30px 0 0;font-size:clamp(15px,1.25vw,17.5px);
+    color:var(--ink-soft);line-height:1.75;
+  }
+  .hero .lede em{font-family:var(--serif);font-style:italic;font-size:1.14em;color:var(--ink);}
+
+  .meta-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    margin-top:clamp(32px,6vw,58px);
+  }
+  .meta-grid > div{padding:16px 18px 15px;border-right:1px solid var(--rule);}
+  .meta-grid > div:last-child{border-right:0;}
+  .meta-grid .k{display:block;margin-bottom:5px;}
+  .meta-grid .v{font-size:14px;font-weight:500;letter-spacing:.01em;}
+
+  /* abstract portrait card */
+  .figure{position:relative;}
+  .figure .frame{
+    position:relative;aspect-ratio:3/4;overflow:hidden;
+    border:1px solid var(--rule);
+    background:
+      radial-gradient(120% 90% at 20% 8%,#FBF8F1 0%,transparent 58%),
+      linear-gradient(168deg,var(--paper-2) 0%,#DCD3C4 100%);
+  }
+  .figure .frame::before{
+    content:"";position:absolute;left:-18%;right:-18%;bottom:-34%;height:74%;
+    border-radius:50% 50% 0 0/58% 58% 0 0;
+    background:linear-gradient(180deg,var(--accent) 0%,#8E2A12 100%);
+    opacity:.92;
+  }
+  .figure .frame::after{
+    content:"C";position:absolute;inset:0;display:grid;place-items:center;
+    font-family:var(--serif);font-size:clamp(120px,18vw,190px);font-style:italic;
+    color:var(--paper);opacity:.92;transform:translateY(-6%);
+  }
+  .figure .cap{
+    display:flex;justify-content:space-between;gap:12px;
+    padding-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);
+  }
+  .badge{
+    position:absolute;top:-13px;right:-13px;z-index:2;
+    width:78px;height:78px;border-radius:50%;
+    background:var(--ink);color:var(--paper);
+    display:grid;place-items:center;text-align:center;
+    font-family:var(--mono);font-size:9px;line-height:1.4;letter-spacing:.08em;
+    text-transform:uppercase;
+    animation:spin 26s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- ticker ---------- */
+  .ticker{
+    margin-top:clamp(34px,5vw,58px);
+    border-block:1px solid var(--rule);
+    overflow:hidden;
+    padding-block:13px;
+    display:flex;
+    user-select:none;
+  }
+  .ticker-track{
+    display:flex;flex:0 0 auto;gap:44px;padding-right:44px;
+    animation:marquee 38s linear infinite;
+    white-space:nowrap;
+  }
+  .ticker-track span{
+    font-family:var(--serif);font-size:19px;letter-spacing:.01em;color:var(--ink-soft);
+    display:inline-flex;align-items:center;gap:44px;
+  }
+  .ticker-track span::after{content:"✳";color:var(--accent);font-size:13px;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  /* ---------- sections ---------- */
+  section{padding-block:clamp(64px,9vw,116px);}
+  .sec-head{
+    display:grid;grid-template-columns:90px 1fr auto;gap:clamp(16px,3vw,40px);
+    align-items:baseline;
+    padding-bottom:22px;border-bottom:1px solid var(--ink);
+  }
+  .sec-head h2{
+    font-family:var(--serif);font-weight:400;margin:0;
+    font-size:clamp(1.9rem,4.2vw,3.1rem);line-height:1.05;letter-spacing:-.015em;
+  }
+  .sec-head .note{max-width:26ch;text-align:right;font-size:13px;color:var(--muted);line-height:1.6;}
+
+  /* work list */
+  .work-list{margin-top:8px;}
+  .work{
+    display:grid;
+    grid-template-columns:56px minmax(0,1fr) 1.05fr 44px;
+    gap:clamp(14px,2.4vw,34px);
+    align-items:center;
+    padding-block:clamp(22px,3vw,34px);
+    border-bottom:1px solid var(--rule);
+    position:relative;
+    transition:padding-left .45s cubic-bezier(.2,.8,.2,1);
+  }
+  .work::before{
+    content:"";position:absolute;inset:0;background:var(--accent-soft);
+    opacity:0;transition:opacity .4s ease;pointer-events:none;
+    transform:scaleY(.7);
+  }
+  .work:hover{padding-left:14px;}
+  .work:hover::before{opacity:1;transform:scaleY(1);}
+  .work .idx{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em;transition:color .3s;}
+  .work:hover .idx{color:var(--accent);}
+  .work h3{
+    margin:0;font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.35rem,2.6vw,2.05rem);line-height:1.15;letter-spacing:-.01em;
+  }
+  .work h3 small{
+    display:block;font-family:var(--sans);font-size:13px;letter-spacing:.02em;
+    color:var(--ink-soft);margin-top:7px;font-weight:400;
+  }
+  .work .tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;}
+  .tag{
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid var(--rule);border-radius:999px;padding:4px 10px;color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .work .arrow{
+    width:44px;height:44px;border:1px solid var(--rule);border-radius:50%;
+    display:grid;place-items:center;justify-self:end;
+    transition:background .35s,color .35s,border-color .35s,transform .35s;
+  }
+  .work .arrow svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.5;}
+  .work:hover .arrow{background:var(--accent);border-color:var(--accent);color:var(--paper);transform:rotate(45deg);}
+
+  /* about */
+  .about-grid{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,5vw,80px);
+    padding-top:clamp(30px,4vw,48px);
+  }
+  .about-copy p{margin:0 0 20px;font-size:clamp(15px,1.35vw,18px);line-height:1.85;color:var(--ink-soft);}
+  .about-copy p strong{color:var(--ink);font-weight:500;}
+  .about-copy .pull{
+    font-family:var(--serif);font-style:italic;font-size:clamp(1.4rem,2.6vw,2rem);
+    line-height:1.3;color:var(--ink);margin:32px 0 0;padding-left:22px;
+    border-left:2px solid var(--accent);
+  }
+  .skills{border-top:1px solid var(--ink);}
+  .skill{
+    display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;
+    padding-block:15px;border-bottom:1px solid var(--rule);
+  }
+  .skill .name{font-size:14px;letter-spacing:.01em;}
+  .skill .bar{height:1px;background:var(--rule);position:relative;grid-column:1/-1;margin-top:11px;}
+  .skill .bar i{position:absolute;left:0;top:0;height:1px;width:0;background:var(--ink);transition:width 1.2s cubic-bezier(.2,.8,.2,1);}
+  .skill .pct{font-family:var(--mono);font-size:11px;color:var(--muted);}
+
+  /* experience */
+  .exp-list{margin-top:8px;}
+  .exp{
+    display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:clamp(14px,3vw,40px);
+    padding-block:clamp(20px,2.6vw,30px);border-bottom:1px solid var(--rule);
+    align-items:baseline;
+  }
+  .exp .yr{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);}
+  .exp h3{margin:0;font-size:clamp(1.05rem,1.7vw,1.3rem);font-weight:500;letter-spacing:.01em;}
+  .exp h3 span{color:var(--muted);font-weight:400;}
+  .exp p{margin:6px 0 0;font-size:13.5px;color:var(--ink-soft);max-width:52ch;}
+  .exp .role{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);white-space:nowrap;}
+
+  /* contact */
+  .contact{border-top:1px solid var(--ink);}
+  .contact .big{
+    display:block;font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.9rem,6.4vw,4.8rem);line-height:1.05;letter-spacing:-.02em;
+    margin:clamp(20px,3vw,34px) 0 0;position:relative;width:fit-content;max-width:100%;
+    word-break:break-word;
+  }
+  .contact .big::after{
+    content:"";position:absolute;left:0;bottom:-2px;height:2px;width:100%;
+    background:var(--accent);transform:scaleX(0);transform-origin:left;
+    transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .contact .big:hover::after{transform:scaleX(1);}
+  .contact .big .atsign{color:var(--accent);}
+  .socials{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(28px,4vw,44px);}
+  .socials a{
+    display:inline-flex;align-items:center;gap:9px;
+    border:1px solid var(--rule);border-radius:999px;padding:10px 18px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    transition:background .3s,color .3s,border-color .3s,transform .3s;
+  }
+  .socials a:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:translateY(-2px);}
+
+  /* footer */
+  footer{
+    border-top:1px solid var(--rule);padding-block:26px 34px;
+    display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between;
+  }
+  footer .f-mono{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+  footer .clock{display:inline-flex;align-items:center;gap:8px;color:var(--ink-soft);}
+  .to-top{display:inline-flex;align-items:center;gap:7px;color:var(--ink-soft);transition:color .3s;}
+  .to-top:hover{color:var(--accent);}
+
+  /* ---------- reveal ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1);}
+  .reveal.in{opacity:1;transform:none;}
+
+  /* hero entrance */
+  .rise{opacity:0;transform:translateY(30px);animation:rise .95s cubic-bezier(.2,.8,.2,1) forwards;}
+  @keyframes rise{to{opacity:1;transform:none;}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.16s}.d3{animation-delay:.27s}
+  .d4{animation-delay:.38s}.d5{animation-delay:.5s}.d6{animation-delay:.62s}
+
+  /* cursor blob */
+  .cursor{
+    position:fixed;top:0;left:0;width:16px;height:16px;border-radius:50%;
+    background:var(--accent);opacity:.85;pointer-events:none;z-index:9998;
+    transform:translate(-50%,-50%);transition:width .3s,height .3s,opacity .3s;
+    mix-blend-mode:multiply;display:none;
+  }
+  @media (pointer:fine){.cursor{display:block;}}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1024px){
+    .rail{display:none;}
+    .hero-grid{grid-template-columns:1fr;}
+    .figure{display:none;}
+    .about-grid{grid-template-columns:1fr;}
+    .work{grid-template-columns:40px minmax(0,1fr) auto;}
+    .work .tags{display:none;}
+  }
+  @media (max-width:720px){
+    .top-inner{height:56px;}
+    nav.links .nav-hide{display:none;}
+    .hero{padding-top:100px;}
+    .meta-grid{grid-template-columns:1fr;}
+    .meta-grid > div{border-right:0;border-bottom:1px solid var(--rule);}
+    .meta-grid > div:last-child{border-bottom:0;}
+    .sec-head{grid-template-columns:1fr auto;gap:10px;}
+    .sec-head .note{display:none;}
+    .exp{grid-template-columns:1fr;gap:8px;}
+    .exp .role{order:-1;}
+    footer{justify-content:flex-start;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+    .reveal,.rise{opacity:1;transform:none;}
+    .cursor{display:none;}
+    .skill .bar i{width:var(--w,0%);}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
+<header class="top" id="top">
+  <div class="wrap top-inner">
+    <a class="brand" href="#hero" aria-label="回到顶部">
+      <b>陈默</b><span>Front-end / Design</span>
+    </a>
+    <nav class="links" aria-label="主导航">
+      <a href="#work">作品</a>
+      <a href="#about">关于</a>
+      <a href="#experience" class="nav-hide">经历</a>
+      <a href="#contact">联系</a>
+    </nav>
+    <span class="status"><i class="dot" aria-hidden="true"></i>开放合作</span>
+  </div>
+</header>
+
+<div class="rail" aria-hidden="true">Portfolio — Selected Works 2026</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero wrap" id="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow rise d1">
+          <span class="line" aria-hidden="true"></span>
+          <span class="mono">前端工程师 / 交互设计 · 上海</span>
+        </div>
+        <h1 class="rise d2">复杂的产品，<br /><span class="it">一眼</span>就懂<span class="dotend">。</span></h1>
+        <p class="lede rise d3">
+          我是陈默，八年时间在浏览器里打磨细节：设计系统、动效、性能，
+          以及那些<em>用户不会注意到但会感觉到</em>的地方。
+        </p>
+        <div class="meta-grid rise d4">
+          <div><span class="k mono">角色</span><span class="v">前端负责人</span></div>
+          <div><span class="k mono">经验</span><span class="v">8 年 / 3 家公司</span></div>
+          <div><span class="k mono">状态</span><span class="v">可接受新项目</span></div>
+        </div>
+      </div>
+
+      <div class="figure rise d5" aria-hidden="true">
+        <div class="badge">Open<br />to work</div>
+        <div class="frame"></div>
+        <div class="cap"><span>Fig. 01 — 陈默</span><span>Shanghai, CN</span></div>
+      </div>
+    </div>
+
+    <div class="ticker rise d6" aria-hidden="true">
+      <div class="ticker-track">
+        <span>设计系统</span><span>动效与微交互</span><span>性能优化</span><span>可访问性</span>
+        <span>数据可视化</span><span>TypeScript</span><span>产品思维</span>
+      </div>
+      <div class="ticker-track">
+        <span>设计系统</span><span>动效与微交互</span><span>性能优化</span><span>可访问性</span>
+        <span>数据可视化</span><span>TypeScript</span><span>产品思维</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="wrap" id="work">
+    <div class="sec-head reveal">
+      <span class="mono">01 / 作品</span>
+      <h2>Select­ed <em style="font-style:italic">Work</em></h2>
+      <p class="note">挑了几个自己愿意反复讲的案子，从设计到上线都由我负责。</p>
+    </div>
+
+    <div class="work-list">
+      <a class="work reveal" href="#contact">
+        <span class="idx">01</span>
+        <h3>「岸线」水务数据平台<small>为城市水务团队重构 30+ 页面，首屏加载提速 62%</small></h3>
+        <span class="tags"><span class="tag">设计系统</span><span class="tag">可视化</span><span class="tag">2024</span></span>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </a>
+
+      <a class="work reveal" href="#contact">
+        <span class="idx">02</span>
+        <h3>「小食光」连锁点单<small>从 0 到 1 的点单产品，上线首月 12 万单</small></h3>
+        <span class="tags"><span class="tag">产品设计</span><span class="tag">前端架构</span><span class="tag">2023</span></span>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </a>
+
+      <a class="work reveal" href="#contact">
+        <span class="idx">03</span>
+        <h3>「纸页」极简阅读器<small>开源项目，8.4k stars，零依赖渲染内核</small></h3>
+        <span class="tags"><span class="tag">开源</span><span class="tag">动效</span><span class="tag">2022</span></span>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </a>
+
+      <a class="work reveal" href="#contact">
+        <span class="idx">04</span>
+        <h3>「等一下」播客官网<small>单页站点，Lighthouse 四项满分</small></h3>
+        <span class="tags"><span class="tag">静态站点</span><span class="tag">排版</span><span class="tag">2021</span></span>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="wrap" id="about">
+    <div class="sec-head reveal">
+      <span class="mono">02 / 关于</span>
+      <h2>慢一点，<em style="font-style:italic">更好</em>一点</h2>
+      <p class="note">技术上偏执，沟通上松弛。喜欢把难讲的事情讲清楚。</p>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-copy reveal">
+        <p>
+          我在 2017 年写下第一行业务代码，此后一直在同一件事上折腾：
+          <strong>让界面在用户手上感觉自然</strong>。写组件、定规范、抠 1 像素的间距，
+          也读日志、压测、为一个 300ms 的性能提升推翻重来。
+        </p>
+        <p>
+          我习惯同时站在产品和工程两侧看问题：先问“这一步用户到底要什么”，
+          再问“用什么结构才能半年后还能改”。设计系统不是画得好看，
+          而是让十个人做出来的东西看起来像一个人做的。
+        </p>
+        <p class="pull">好界面不是说得多，<br />而是让人少想一步。</p>
+      </div>
+
+      <div class="skills reveal" aria-label="技能">
+        <div class="skill">
+          <span class="name">前端架构 / TypeScript</span><span class="pct">92</span>
+          <span class="bar"><i data-w="92"></i></span>
+        </div>
+        <div class="skill">
+          <span class="name">交互与动效设计</span><span class="pct">88</span>
+          <span class="bar"><i data-w="88"></i></span>
+        </div>
+        <div class="skill">
+          <span class="name">设计系统落地</span><span class="pct">90</span>
+          <span class="bar"><i data-w="90"></i></span>
+        </div>
+        <div class="skill">
+          <span class="name">性能与可访问性</span><span class="pct">85</span>
+          <span class="bar"><i data-w="85"></i></span>
+        </div>
+        <div class="skill">
+          <span class="name">数据可视化</span><span class="pct">80</span>
+          <span class="bar"><i data-w="80"></i></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="wrap" id="experience">
+    <div class="sec-head reveal">
+      <span class="mono">03 / 经历</span>
+      <h2>一路<em style="font-style:italic">走来</em></h2>
+      <p class="note">从写页面到定标准，走了八年。</p>
+    </div>
+
+    <div class="exp-list">
+      <div class="exp reveal">
+        <span class="yr">2022 — 至今</span>
+        <div>
+          <h3>岸线科技 <span>/ 前端负责人</span></h3>
+          <p>组建 6 人前端团队，主导设计系统与可视化组件库；把核心页面性能从中位数 3.1s 拉到 1.2s。</p>
+        </div>
+        <span class="role">Team Lead</span>
+      </div>
+      <div class="exp reveal">
+        <span class="yr">2019 — 2022</span>
+        <div>
+          <h3>纸页工作室 <span>/ 高级前端工程师</span></h3>
+          <p>负责阅读器内核与排版引擎，主导开源项目「纸页」，累计 8.4k stars。</p>
+        </div>
+        <span class="role">Senior</span>
+      </div>
+      <div class="exp reveal">
+        <span class="yr">2017 — 2019</span>
+        <div>
+          <h3>某互联网公司 <span>/ 前端工程师</span></h3>
+          <p>从业务页面做起，负责活动页、后台管理系统与前端构建流程改造。</p>
+        </div>
+        <span class="role">Engineer</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="wrap contact" id="contact">
+    <div class="sec-head reveal" style="border-bottom:0;padding-bottom:0;">
+      <span class="mono">04 / 联系</span>
+      <h2>聊聊你的<em style="font-style:italic">下一个</em>想法</h2>
+    </div>
+    <a class="big reveal" href="mailto:hi@chenmo.design">hi<span class="atsign">@</span>chenmo.design</a>
+
+    <div class="socials reveal">
+      <a href="#contact">GitHub</a>
+      <a href="#contact">即刻</a>
+      <a href="#contact">作品集 PDF</a>
+      <a href="mailto:hi@chenmo.design">写邮件</a>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <span class="f-mono">© 2026 陈默 · 由 HTML 与耐心构成</span>
+  <span class="f-mono clock"><i class="dot" style="animation:none" aria-hidden="true"></i>上海 <span id="clock">--:--:--</span></span>
+  <a class="f-mono to-top" href="#hero">回到顶部 ↑</a>
+</footer>
+
+<script>
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* scroll progress + sticky header */
+    var bar = document.getElementById('progress');
+    var head = document.getElementById('top');
+    function onScroll() {
+      var h = document.documentElement;
+      var max = h.scrollHeight - h.clientHeight;
+      var p = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      bar.style.width = p.toFixed(2) + '%';
+      head.classList.toggle('stuck', h.scrollTop > 8);
+    }
+    document.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* reveal on scroll */
+    var items = document.querySelectorAll('.reveal');
+    if (reduce || !('IntersectionObserver' in window)) {
+      items.forEach(function (el) { el.classList.add('in'); });
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            var barEl = e.target.querySelector('.bar i');
+            if (barEl) barEl.style.width = barEl.dataset.w + '%';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+      items.forEach(function (el) { io.observe(el); });
+      document.querySelectorAll('.skill').forEach(function (s) {
+        var i = s.querySelector('.bar i');
+        i.style.setProperty('--w', i.dataset.w + '%');
+      });
+    }
+
+    /* clock */
+    var clock = document.getElementById('clock');
+    function tick() {
+      try {
+        clock.textContent = new Intl.DateTimeFormat('zh-CN', {
+          timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit',
+          second: '2-digit', hour12: false
+        }).format(new Date());
+      } catch (err) {
+        clock.textContent = new Date().toLocaleTimeString('zh-CN');
+      }
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    /* cursor accent (fine pointers only) */
+    var cur = document.getElementById('cursor');
+    if (!reduce && window.matchMedia('(pointer: fine)').matches) {
+      var x = 0, y = 0, tx = 0, ty = 0;
+      document.addEventListener('mousemove', function (e) { tx = e.clientX; ty = e.clientY; });
+      (function loop() {
+        x += (tx - x) * 0.18;
+        y += (ty - y) * 0.18;
+        cur.style.transform = 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%)';
+        requestAnimationFrame(loop);
+      })();
+      document.querySelectorAll('a, .work').forEach(function (el) {
+        el.addEventListener('mouseenter', function () { cur.style.width = '46px'; cur.style.height = '46px'; cur.style.opacity = '.28'; });
+        el.addEventListener('mouseleave', function () { cur.style.width = '16px'; cur.style.height = '16px'; cur.style.opacity = '.85'; });
+      });
+    }
+  })();
+</script>
+</body>
+</html>
